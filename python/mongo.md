@@ -4,10 +4,16 @@
 ```python
 db.collection.update(
     { name: "张三" },
-    { $addToSet: { grades: 95 }, $set: {}, $push: {name: "xiao"}}
+    { 
+        $addToSet: { grades: 95 }, 
+        $set: {}, 
+        $push: {name: "xiao"}, 
+        $push: { <field>: { $each: [ <value1>, <value2>, ... ] } } 
+    }
 )
 ```
 
+**批量更新或插入数据到表 permission_point**
 permission_point 表结构
 ```json
     {
@@ -31,7 +37,11 @@ permission_point 表结构
     }
 ```
 
-实现功能：批量更新或插入数据
+关键点：
+- update 的数据要完整，是一条新数据
+- 字段是列表或集合，使用 addToSet 或 push 时，字段值用字符串而不是列表
+- 要向数组中添加多个元素，可以使用"push"操作符的"push"操作符的"each"修饰符
+
 ```python
 def bulk_update_permission_point(urls_list, is_delete=0):
         update_list = list()
@@ -64,5 +74,3 @@ def bulk_update_permission_point(urls_list, is_delete=0):
 
         return self.db.bulk_write(self.coll, update_list, ordered=False)
 ```
-
-
